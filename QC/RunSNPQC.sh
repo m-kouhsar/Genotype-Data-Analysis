@@ -13,9 +13,7 @@
 ### print start date and time
 echo Job started on:
 date -u
-
-set -e
-####### 
+###
 
 module purge 2>/dev/null
 module load VCFtools 2>/dev/null
