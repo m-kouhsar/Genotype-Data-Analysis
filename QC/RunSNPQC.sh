@@ -97,6 +97,7 @@ then
 fi
 
 if [ $FormatForImputation = "yes" ]
+then
 	echo "#######################################################"
 	echo "Preparing Imputation input files..."
 	echo "#######################################################"
