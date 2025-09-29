@@ -83,7 +83,7 @@ sh ${ScriptDir}/3_QC.sh
 if [ $CheckReletedness = "yes" ]
 then
   echo "#######################################################"
-  echo "Checking relatedness relatedness..."
+  echo "Checking relatedness..."
   echo "#######################################################"
   sh ${ScriptDir}/4_CheckRelatedness.sh
 fi
