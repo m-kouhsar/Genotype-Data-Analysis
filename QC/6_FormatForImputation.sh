@@ -28,7 +28,7 @@ plink --bfile ${FilePrefix}_QC_final --freq --out ImputationInput/${FilePrefix}_
 
 cp ${FilePrefix}_QC_final.bim ImputationInput/${FilePrefix}_QC_final.bim
 cd ImputationInput
-perl5.16.3 ${ScriptDir}/HRC-1000G-check-bim.pl -b ${FilePrefix}_QC_final.bim -f ${FilePrefix}_QC_final.frq -r $RefGenome_legend -g --1000g
+perl ${ScriptDir}/HRC-1000G-check-bim.pl -b ${FilePrefix}_QC_final.bim -f ${FilePrefix}_QC_final.frq -r $RefGenome_legend -g --1000g
 
 
 sed -i  '1 s+'"${FilePrefix}_QC_final"'+'"${OutDir}/QCoutput_${FilePrefix}/${FilePrefix}_QC_final"'+' Run-plink.sh
