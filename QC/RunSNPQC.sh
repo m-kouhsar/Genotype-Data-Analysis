@@ -9,11 +9,14 @@
 #SBATCH --mail-type=END # send email at job completion
 #SBATCH --mail-user=m.kouhsar@exeter.ac.uk # email address
 #SBATCH --job-name=SNPQC
+#SBATCH --output=SNPQC.%j.out
+#SBATCH --error=SNPQC.%j.err
 
 ##################################################################################
 # Running QC on genotype data in plink binary format
 # Requiered tools:
 #            -plink
+#            -king
 #            -VCFtools
 #            -BCFtools
 #            -Python
@@ -45,7 +48,7 @@ echo "    Hardy-Weinberg equilibrium exact test p-value threshold: $HWE"
 echo "    Is ethnicity of the samples checked? $CheckEthnicity"
 echo "    Is reletness of the samples checked? $CheckReletedness"
 echo "    Is Sex of the samples checked? $CheckSex"
-echo "    Input data format: $InputFormat"
+echo "    Input data format: $FormatForImputation"
 echo "    Chromosomal Separated inputs: $CombinedInputs"
 echo "    Genrating summary plots for imputed data? $sumplots"
 echo "    Reference genome binary files prefix: $RefGenome_binary"
