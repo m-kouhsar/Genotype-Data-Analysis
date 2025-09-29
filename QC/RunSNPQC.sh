@@ -10,7 +10,6 @@
 #SBATCH --mail-user=m.kouhsar@exeter.ac.uk # email address
 #SBATCH --job-name=SNPQC
 #SBATCH --output=SNPQC.%j.out
-#SBATCH --error=SNPQC.%j.err
 
 ##################################################################################
 # Running QC on genotype data in plink binary format

@@ -36,7 +36,7 @@ else
 fi	
 
 echo
-echo "[INFO] Removingvariants at the same position (i.e. triallelic)..."
+echo "[INFO] Removing variants at the same position (i.e. triallelic)..."
 echo
 ## remove variants at the same position (i.e. triallelic)
 awk '{if ($1 != 0) print $1":"$4}' ${FilePrefix}_update_1.bim > pos.tmp
@@ -62,6 +62,11 @@ then
   ## If a samples doesn't have real sex, we can use the predicted sex for it
   awk '{if ( $4 != $3 && $3 != 0 && $4 != 0 ) print $1,$2,$3,$4,$5,$6}'  ${FilePrefix}.sexcheck >> ${FilePrefix}_sexErrors.txt
   plink --bfile ${FilePrefix}_update_2 --remove ${FilePrefix}_sexErrors.txt --make-bed --out ${FilePrefix}_update_3
+
+else
+	cp ${FilePrefix}_update_2.bed ${FilePrefix}_update_3.bed
+	cp ${FilePrefix}_update_2.bim ${FilePrefix}_update_3.bim
+	cp ${FilePrefix}_update_2.fam ${FilePrefix}_update_3.fam
 fi
 
 echo
