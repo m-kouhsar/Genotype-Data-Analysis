@@ -74,7 +74,7 @@ sh "${ScriptDir}/1_PreparingInputs.sh"
 
 if [ "$sumplots" == yes ]
 then
-  mkdir -p ${OutDir}/QCoutput_${FilePrefix}/Summarize
+  mkdir -p "${OutDir}/QCoutput_${FilePrefix}/Summarize"
   echo "###############################################################"
   echo "Generating summerize imputation plots..."
   echo "###############################################################"
