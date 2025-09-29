@@ -31,7 +31,13 @@ echo Job started on:
 date -u
 ###
 
-source $1
+if [ -z "$1" ]; then
+    echo "Error: No configuration file supplied."
+    echo "Usage: sbatch $0 /path/to/your/config.file"
+    exit 1
+fi
+
+source "$1"
 
 echo "#############################################################################"
 echo " "
@@ -59,12 +65,12 @@ echo "    Scripts directory: $ScriptDir"
 echo " "
 echo "#############################################################################"
 
-mkdir -p ${OutDir}/QCoutput_${FilePrefix}
+mkdir -p "${OutDir}/QCoutput_${FilePrefix}"
 
 echo "###############################################################"
 echo "Preparing Input data..."
 echo "###############################################################"
-sh ${ScriptDir}/1_PreparingInputs.sh
+sh "${ScriptDir}/1_PreparingInputs.sh"
 
 if [ "$sumplots" == yes ]
 then
@@ -72,36 +78,36 @@ then
   echo "###############################################################"
   echo "Generating summerize imputation plots..."
   echo "###############################################################"
-  Rscript ${ScriptDir}/2_summarizeImputation.r ${InDir}  ${OutDir}/QCoutput_${FilePrefix}/Summarize  ${RefGenome_legend}
+  Rscript "${ScriptDir}/2_summarizeImputation.r" "${InDir}"  "${OutDir}/QCoutput_${FilePrefix}/Summarize"  "${RefGenome_legend}"
 fi
 
 echo "###############################################################"
 echo "Running general QC..."
 echo "###############################################################"
-sh ${ScriptDir}/3_QC.sh
+sh "${ScriptDir}/3_QC.sh"
 
-if [ $CheckReletedness = "yes" ]
+if [ "$CheckReletedness" = "yes" ]
 then
   echo "#######################################################"
   echo "Checking relatedness..."
   echo "#######################################################"
-  sh ${ScriptDir}/4_CheckRelatedness.sh
+  sh "${ScriptDir}/4_CheckRelatedness.sh"
 fi
 
-if [ $CheckEthnicity = "yes" ]
+if [ "$CheckEthnicity" = "yes" ]
 then
   echo "#######################################################"
   echo "Checkinging ethnicity..."
   echo "#######################################################"
-  sh ${ScriptDir}/5_CheckEthnicity.sh
+  sh "${ScriptDir}/5_CheckEthnicity.sh"
 fi
 
-if [ $FormatForImputation = "yes" ]
+if [ "$FormatForImputation" = "yes" ]
 then
 	echo "#######################################################"
 	echo "Preparing Imputation input files..."
 	echo "#######################################################"
-	sh ${ScriptDir}/6_FormatForImputation.sh
+	sh "${ScriptDir}/6_FormatForImputation.sh"
 fi
 #### print end date and time
 echo Job finished:
