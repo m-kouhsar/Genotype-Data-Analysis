@@ -1,7 +1,6 @@
 
 cd ${OutDir}/QCoutput_${FilePrefix}
 mkdir -p Relatedness
-echo "Checking Relatedness"
 ## check for relatedness with other samples with KING
 king -b ${FilePrefix}_QC_final.bed --kinship --prefix Relatedness/${FilePrefix}_QC_final_king
 
