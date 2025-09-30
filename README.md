@@ -12,4 +12,5 @@ You can also submit it as a job using slurm:
 `
 sbatch RunSNPQC.sh QC.config
 `
+
 Refernce for perl script: [https://www.chg.ox.ac.uk/~wrayner/tools/](https://www.chg.ox.ac.uk/~wrayner/tools/)
