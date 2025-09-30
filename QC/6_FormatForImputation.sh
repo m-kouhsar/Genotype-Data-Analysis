@@ -37,7 +37,7 @@ sh Run-plink.sh
 #for file in *.vcf; do awk '{if($0 !~ /^#/) print "chr"$0; else print $0}' ${file} > with_chr_${file}; vcf-sort with_chr_${file} | bgzip -c > ${file}.gz;done
 for file in *.vcf; do vcf-sort ${file} | bgzip -c > ${file}.gz;done
  
-rm *.vcf
-rm *.txt *.log
-rm *.b* *.f*
+#rm *.vcf
+#rm *.txt *.log
+#rm *.b* *.f*
 
