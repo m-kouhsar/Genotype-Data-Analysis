@@ -59,8 +59,7 @@ echo "    Genrating summary plots for imputed data? $sumplots"
 echo "    Reference genome binary files prefix: $RefGenome_binary"
 echo "    Reference genome legend file: $RefGenome_legend"
 echo "    Reference genome samples file: $RefGenome_samples"
-echo "    Reference genome ped file: $RefGenome_ped"
-echo "    Reference genome info file: $RefGenome_info"
+echo "    SNP probes file: $RefProbe"
 echo "    Scripts directory: $ScriptDir"
 echo " "
 echo "#############################################################################"
@@ -81,10 +80,13 @@ then
   Rscript "${ScriptDir}/2_summarizeImputation.r" "${InDir}"  "${OutDir}/QCoutput_${FilePrefix}/Summarize"  "${RefGenome_legend}"
 fi
 
-echo "###############################################################"
-echo "Running general QC..."
-echo "###############################################################"
-###sh "${ScriptDir}/3_QC.sh"
+if [ "$GeneralQC" = "yes" ]
+then
+  echo "###############################################################"
+  echo "Running general QC..."
+  echo "###############################################################"
+  sh "${ScriptDir}/3_QC.sh"
+fi
 
 if [ "$CheckReletedness" = "yes" ]
 then
