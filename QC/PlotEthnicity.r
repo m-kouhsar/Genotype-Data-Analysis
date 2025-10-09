@@ -1,5 +1,7 @@
 ## script to plot PCA output and colour by 1000G ethnicity
 library(ggplot2)
+library(ggpubr)
+library(dplyr)
 
 
 calcPopDist<-function(dat.pca, ref){
@@ -24,117 +26,138 @@ args<-commandArgs(TRUE)
 setwd(args[1])
 prefix<-args[2]
 refSamples<-args[3]
-refPed <- args[4]
-refInfo <- args[5]
+#refPed <- args[4]
+#refInfo <- args[5]
 
 pcas<-read.table(paste0(prefix,"_mergedw1000G.pca.eigenvec"), stringsAsFactors = FALSE)
 pop <- read.csv(refSamples, header = T, stringsAsFactors = F)
+names(pop) = c("Sample" , "Population" , "SuperPopulation")
+pcas = pcas[,-1]
+colnames(pcas) = c("Sample" , paste0("PC" , c(1:(ncol(pcas)-1))))
 
-pcs <- pcas
-pcs <- pcs[,c(-1)]
-colnames(pcs)[2:dim(pcs)[2]] <- paste0("PC",c(1:(dim(pcs)[2]-1)))
-colnames(pcs)[1] <- "sample"
-pcs$population <- pop$Super_Population[match(pcs$sample, pop$Sample)]
-pcs[is.na(pcs)] <- " "
-pcs$population[which(pcs$population== " ")]<-"OurSamples"
-pcs$population <- as.factor(pcs$population)
-pcs_our <- pcs[pcs$population=="OurSamples",]
-
-pdf(paste0(prefix,"_PCAplot_All.pdf"), width = 10, height = 10)
-ggplot(pcs, aes(PC1, PC2, color= population),label=sample)+
-  geom_point() + 
-  scale_color_manual(values = c("AFR" = "brown1", "AMR" = "darkgoldenrod1","EAS"="darkolivegreen1","SAS"="darkorchid1","OurSamples"="blue","EUR"="cyan"))
-
-ggplot(pcs, aes(PC2, PC3, color= population),label=sample)+
-  geom_point() + 
-  scale_color_manual(values = c("AFR" = "brown1", "AMR" = "darkgoldenrod1","EAS"="darkolivegreen1","SAS"="darkorchid1","OurSamples"="blue","EUR"="cyan"))
-
-dev.off()
+pcas <- left_join(pcas , pop , by="Sample")
+pcas$Population[is.na(pcas$Population)] = "OurSamples"
+pcas$SuperPopulation[is.na(pcas$SuperPopulation)]="OurSamples"
 
 
 
+
+# pcs <- pcas
+# pcs <- pcs[,c(-1)]
+# colnames(pcs)[2:dim(pcs)[2]] <- paste0("PC",c(1:(dim(pcs)[2]-1)))
+# colnames(pcs)[1] <- "sample"
+# pcs$population <- pop$SuperPopulation[match(pcs$sample, pop$Sample)]
+# pcs[is.na(pcs)] <- " "
+# pcs$population[which(pcs$population== " ")]<-"OurSamples"
+# pcs$population <- as.factor(pcs$population)
+pcs_our <- pcas[pcas$Population=="OurSamples",]
+p1 = ggplot(pcs_our, aes(PC1, PC2)) + geom_point() 
+p2 = ggplot(pcs_our, aes(PC1, PC3)) + geom_point() 
+p3 = ggplot(pcs_our, aes(PC2, PC3)) + geom_point() 
 pdf(paste0(prefix,"_PCAplot.pdf"), width = 10, height = 10)
-ggplot(pcs_our, aes(PC1, PC2, color= population),label=sample)+
-  geom_point() 
-ggplot(pcs_our, aes(PC2, PC3, color= population),label=sample)+
-  geom_point() 
+ggarrange(p1,p2,p3 ,nrow = 2 , ncol = 2)
 dev.off()
 
-KGped<-read.table(refPed, stringsAsFactors = FALSE, header = TRUE, sep = "\t")
-popInfo<-read.table(refInfo, stringsAsFactors = FALSE, header = TRUE, sep = "\t") ## table made from 1000G website
+p1 = ggplot(pcas, aes(PC1, PC2,colour =Population)) + geom_point() 
+p2 = ggplot(pcas, aes(PC1, PC3,colour =Population)) + geom_point() 
+p3 = ggplot(pcas, aes(PC1, PC4,colour =Population)) + geom_point() 
+p4 = ggplot(pcas, aes(PC2, PC3,colour =Population)) + geom_point() 
+p5 = ggplot(pcas, aes(PC2, PC4,colour =Population)) + geom_point() 
+p6 = ggplot(pcas, aes(PC3, PC4,colour =Population)) + geom_point()
 
-KGped<-KGped[match(pcas[,2], KGped[,2]),]
-nPops<-length(table(KGped$Population))
-popInfo<-popInfo[match(popInfo$Population.Code,levels(as.factor(KGped$Population))),]
-
-KGped<-cbind(KGped,popInfo$Super.Population.Code[match(KGped$Population, popInfo$Population.Code)])
-colnames(KGped)[ncol(KGped)]<-"SuperPopulation"
-nSuperPops<-length(table(KGped$SuperPopulation))
-
-
-
-ptType<-c(20,3)[as.factor(is.na(KGped[,1]))]
-ptCol<-rainbow(nPops)[as.factor(KGped$Population)]
-ptCol[is.na(ptCol)]<-"black"
+p7 = ggplot(pcas, aes(PC1, PC2,colour =SuperPopulation)) + geom_point() 
+p8 = ggplot(pcas, aes(PC1, PC3,colour =SuperPopulation)) + geom_point() 
+p9 = ggplot(pcas, aes(PC1, PC4,colour =SuperPopulation)) + geom_point() 
+p10 = ggplot(pcas, aes(PC2, PC3,colour =SuperPopulation)) + geom_point() 
+p11 = ggplot(pcas, aes(PC2, PC4,colour =SuperPopulation)) + geom_point() 
+p12 = ggplot(pcas, aes(PC3, PC4,colour =SuperPopulation)) + geom_point()
 
 pdf(paste0(prefix,"_PCAplotwith1KG.pdf"), width = 10, height = 10)
-par(mfrow = c(2,2))
-par(mar = c(4,4,0.75,0.75))
-plot(pcas[,3], pcas[,4], xlab = "PC1", ylab = "PC2", pch = ptType, col = ptCol)
-plot(pcas[,3], pcas[,5], xlab = "PC1", ylab = "PC3", pch = ptType, col = ptCol)
-plot(pcas[,3], pcas[,6], xlab = "PC1", ylab = "PC4", pch = ptType, col = ptCol)
-plot(0,1,type = "n", axes = FALSE, xlab = "", ylab = "")
-legend("center", pch = 16, col = rainbow(nPops), levels(as.factor(KGped$Population)), cex = 1.5, ncol = 3)
-
-
-## alternatively plot "super populations"
-
-
-ptCol<-rainbow(nSuperPops)[as.factor(KGped$SuperPopulation)]
-ptCol[is.na(ptCol)]<-"black"
-layout(matrix(c(1,2,3,4), ncol = 2), widths = c(3,3,3,0.75))
-plot(pcas[,3], pcas[,4], xlab = "PC1", ylab = "PC2", pch = ptType, col = ptCol)
-plot(pcas[,3], pcas[,5], xlab = "PC1", ylab = "PC3", pch = ptType, col = ptCol)
-plot(pcas[,3], pcas[,6], xlab = "PC1", ylab = "PC4", pch = ptType, col = ptCol)
-plot(0,1,type = "n", axes = FALSE, xlab = "", ylab = "")
-legend("center", pch = 16, col = rainbow(nSuperPops), levels(as.factor(KGped$SuperPopulation)), cex = 1.5)
-
+ggarrange(p1,p2,p3,p4,p5,p6 ,nrow = 3 , ncol = 2 , common.legend = T , legend = "right")
+ggarrange(p7,p8,p9,p10,p11,p12 ,nrow = 3 , ncol = 2 , common.legend = T , legend = "right")
 dev.off()
+
+
+# KGped<-read.table(refPed, stringsAsFactors = FALSE, header = TRUE, sep = "\t")
+# popInfo<-read.table(refInfo, stringsAsFactors = FALSE, header = TRUE, sep = "\t") ## table made from 1000G website
+
+
+# 
+# # KGped<-KGped[match(pcas[,2], KGped[,2]),]
+# nPops<-length(table(pcas$Population))
+# # popInfo<-popInfo[match(popInfo$Population.Code,levels(as.factor(KGped$Population))),]
+# # 
+# # KGped<-cbind(KGped,popInfo$Super.Population.Code[match(KGped$Population, popInfo$Population.Code)])
+# # colnames(KGped)[ncol(KGped)]<-"SuperPopulation"
+# nSuperPops<-length(table(pcas$SuperPopulation))
+# 
+# 
+# 
+# ptType<-ifelse(pcas$Population == "OurSamples", 3, 20)
+# ptCol<-rainbow(nPops)[as.factor(pcas$Population)]
+# ptCol[pcas$Population == "OurSamples"]<-"black"
+# 
+# pdf(paste0(prefix,"_PCAplotwith1KG.pdf"), width = 10, height = 10)
+# layout(matrix(c(1, 2, 3, 4, 5, 6), nrow = 2, ncol = 3), widths = c(3, 3, 1))
+# par(mar = c(4, 4, 2, 1))
+# plot(pcas[,2], pcas[,3], xlab = "PC1", ylab = "PC2", pch = ptType, col = ptCol)
+# plot(pcas[,2], pcas[,4], xlab = "PC1", ylab = "PC3", pch = ptType, col = ptCol)
+# plot(pcas[,2], pcas[,5], xlab = "PC1", ylab = "PC4", pch = ptType, col = ptCol)
+# plot(pcas[,3], pcas[,4], xlab = "PC2", ylab = "PC3", pch = ptType, col = ptCol)
+# plot(pcas[,4], pcas[,5], xlab = "PC3", ylab = "PC4", pch = ptType, col = ptCol)
+# par(mar = c(0, 0, 0, 0))
+# plot(0,1,type = "n", axes = FALSE, xlab = "", ylab = "")
+# legend("center", pch = 16, col = rainbow(nPops), levels(as.factor(pcas$Population)), cex = 1.5, ncol = 2)
+# 
+# 
+# ## alternatively plot "super populations"
+# 
+# 
+# ptCol<-rainbow(nSuperPops)[as.factor(pcas$SuperPopulation)]
+# ptCol[pcas$SuperPopulation == "OurSamples"]<-"black"
+# layout(matrix(c(1,2,3,4), ncol = 2), widths = c(3,3,3,0.75))
+# plot(pcas[,2], pcas[,3], xlab = "PC1", ylab = "PC2", pch = ptType, col = ptCol)
+# plot(pcas[,2], pcas[,4], xlab = "PC1", ylab = "PC3", pch = ptType, col = ptCol)
+# plot(pcas[,2], pcas[,5], xlab = "PC1", ylab = "PC4", pch = ptType, col = ptCol)
+# plot(0,1,type = "n", axes = FALSE, xlab = "", ylab = "")
+# legend("center", pch = 16, col = rainbow(nSuperPops), levels(as.factor(pcas$SuperPopulation)), cex = 1.5)
+# 
+# dev.off()
 
 
 
 ## for each super population calculate cluster medians
-print("Calculating population means")
+message("Calculating population means")
 nMatches<-rep(NA,20) 
 for(nPCs in 2:20){
-	pop.medians<-apply(pcas[,-c(1:2)][,1:nPCs], 2,aggregate, by = list(KGped$SuperPopulation), median)
+	pop.medians<-apply(pcas[,-1][,1:nPCs], 2,aggregate, by = list(pcas$SuperPopulation), median)
 	pop.medians<-cbind.data.frame(pop.medians)
 	rownames(pop.medians)<-pop.medians[,1]
 	pop.medians<-pop.medians[,seq(2,nPCs*2,2)]
 
 	## for each individual compare to each super population and find most similar
-	popDistsAll<-apply(pcas[,-c(1:2)][,1:nPCs], 1, calcPopDist, pop.medians)
+	popDistsAll<-apply(pcas[,-1][,1:nPCs], 1, calcPopDist, pop.medians)
 	popDistsAll<-t(popDistsAll)
 	predPop<-colnames(popDistsAll)[apply(popDistsAll, 1, which.min)]
 
-	compTrue<-table(predPop, KGped$SuperPopulation)
+	compTrue<-table(predPop, pcas$SuperPopulation)
 	nMatches[nPCs]<-sum(diag(compTrue))
   print(nPCs)
 }
 
 
 pdf(paste0(prefix,"_SelectOptimalnPCsForPopulationPrediction.pdf"))
-plot(1:20,nMatches/sum(!is.na(KGped$SuperPopulation))*100, xlab = "nPCs", ylab = "Percentage Correct")
+plot(1:20,nMatches/sum(!is.na(pcas$SuperPopulation))*100, xlab = "nPCs", ylab = "Percentage Correct")
 dev.off()
 
 nPCs<-which.max(nMatches)
-pop.medians<-apply(pcas[,-c(1:2)][,1:nPCs], 2,aggregate, by = list(KGped$SuperPopulation), median)
+pop.medians<-apply(pcas[,-1][,1:nPCs], 2,aggregate, by = list(pcas$SuperPopulation), median)
 pop.medians<-cbind.data.frame(pop.medians)
 rownames(pop.medians)<-pop.medians[,1]
 pop.medians<-pop.medians[,seq(2,nPCs*2,2)]
 
 ## for each individual compare to each super population and find most similar
-popDistsAll<-apply(pcas[,-c(1:2)][,1:nPCs], 1, calcPopDist, pop.medians)
+popDistsAll<-apply(pcas[,-1][,1:nPCs], 1, calcPopDist, pop.medians)
 popDistsAll<-t(popDistsAll)
 predPop<-colnames(popDistsAll)[apply(popDistsAll, 1, which.min)]
 
@@ -144,7 +167,7 @@ rangeDist<-t(diff(apply(popDistsAll,1,range)))
 qsPred<-(apply(popDistsAll,1,quantile, 0.25)-apply(popDistsAll,1,min))/rangeDist
 pdf(paste0(prefix,"_BoxplotPrePopQCScores.pdf"), width = 12, height = 6)
 par(mfrow = c(1,2))
-boxplot(qsPred ~ KGped$SuperPopulation, col = rainbow(5), xlab = "Known populations")
+boxplot(qsPred ~ pcas$SuperPopulation, col = rainbow(5), xlab = "Known populations")
 boxplot(qsPred ~ predPop, col = rainbow(5), xlab = "Predicted populations")
 dev.off()
 
@@ -155,19 +178,20 @@ dev.off()
 #table(apply(popDistsAll, 1, min) < pop99Thres[predPop],as.factor(predPop))
 
 print("Plotting predicted populations")
-
+nSuperPops<-length(table(pcas$SuperPopulation))
+ptType<-ifelse(pcas$Population == "OurSamples", 3, 20)
 ptCol<-rainbow(nSuperPops)[as.factor(predPop)]
 pdf(paste0(prefix,"_PCAplotwith1KGpredictedPopulations.pdf"), width = 10, height = 10)
 layout(matrix(c(1,2,3,4), ncol = 2), widths = c(3,3,3,0.75))
-plot(pcas[,3], pcas[,4], xlab = "PC1", ylab = "PC2", pch = ptType, col = ptCol)
-plot(pcas[,3], pcas[,5], xlab = "PC1", ylab = "PC3", pch = ptType, col = ptCol)
-plot(pcas[,3], pcas[,6], xlab = "PC1", ylab = "PC4", pch = ptType, col = ptCol)
+plot(pcas[,2], pcas[,3], xlab = "PC1", ylab = "PC2", pch = ptType, col = ptCol)
+plot(pcas[,2], pcas[,4], xlab = "PC1", ylab = "PC3", pch = ptType, col = ptCol)
+plot(pcas[,2], pcas[,5], xlab = "PC1", ylab = "PC4", pch = ptType, col = ptCol)
 plot(0,1,type = "n", axes = FALSE, xlab = "", ylab = "")
-legend("center", pch = 16, col = rainbow(nSuperPops), levels(as.factor(KGped$SuperPopulation)), cex = 1.5)
-plot(pcas[,3], pcas[,4], xlab = "PC1", ylab = "PC2", type = "n")
-points(pcas[which(ptType == 20),3], pcas[which(ptType == 20),4], pch = 20, col = ptCol[which(ptType == 20)])
-plot(pcas[,3], pcas[,4], xlab = "PC1", ylab = "PC2", type = "n")
-points(pcas[which(ptType == 3),3], pcas[which(ptType == 3),4], pch = 3, col = ptCol[which(ptType == 3)])
+legend("center", pch = 16, col = rainbow(nSuperPops), levels(as.factor(pcas$SuperPopulation)), cex = 1.5)
+plot(pcas[,2], pcas[,3], xlab = "PC1", ylab = "PC2", type = "n")
+points(pcas[which(ptType == 20),2], pcas[which(ptType == 20),3], pch = 20, col = ptCol[which(ptType == 20)])
+plot(pcas[,2], pcas[,3], xlab = "PC1", ylab = "PC2", type = "n")
+points(pcas[which(ptType == 3),2], pcas[which(ptType == 3),3], pch = 3, col = ptCol[which(ptType == 3)])
 
 dev.off()
 

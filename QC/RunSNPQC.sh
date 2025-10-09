@@ -84,7 +84,7 @@ fi
 echo "###############################################################"
 echo "Running general QC..."
 echo "###############################################################"
-sh "${ScriptDir}/3_QC.sh"
+###sh "${ScriptDir}/3_QC.sh"
 
 if [ "$CheckReletedness" = "yes" ]
 then
