@@ -50,7 +50,7 @@ rm Ethnicity/${FilePrefix}_QC_final_mergedw1000G*grm*
 echo
 echo "Generating plots..."
 echo 
-Rscript ${ScriptDir}/PlotEthnicity.r ${OutDir}/QCoutput_${FilePrefix}/Ethnicity ${FilePrefix}_QC_final ${RefGenome_samples} $RefGenome_ped $RefGenome_info
+Rscript ${ScriptDir}/PlotEthnicity.r ${OutDir}/QCoutput_${FilePrefix}/Ethnicity ${FilePrefix}_QC_final ${RefGenome_samples} #$RefGenome_ped $RefGenome_info
 
 #plink --bfile ${FilePrefix}_QC_final --remove ${FilePrefix}_QC_final_EthnicityOutliers.txt --make-bed --out Ethnicity/${FilePrefix}_QC_final
 #mv Relatedness/${FilePrefix}_QC_final.b* ./
