@@ -1,9 +1,10 @@
 library(ggplot2)
 
 args<-commandArgs(TRUE)
-#args <- c("/lustre/projects/Research_Project-191391/Genotyping/Imputation_Results/PostImpQCoutput_NIH37","NIH37_PostImp_1-22_BiAllelic")
-setwd(args[1])
-prefix <- args[2]
+
+setwd(trimws(args[1]))
+Kinship <- as.numeric(trimws(args[2]))
+prefix <- trimws(args[3])
 
 ibd <- read.table(file =paste0(prefix,"_ibd.genome"),stringsAsFactors = F,header = T )
 ibd$Relatedness[ibd$RT=="UN"] <- "Unrelated"
@@ -20,18 +21,25 @@ if(file.exists(paste0(prefix,"_king.kin0"))){
 }
   
 
-outliers <- kin[kin$Kinship >= 0.25,]
+outliers <- kin[kin$Kinship >= Kinship,] 
 
-pdf(paste0(prefix,"relatedness.pdf"))
+pdf(paste0(prefix,".relatedness.pdf"))
 
 hist(kin$Kinship,main =paste0(prefix, " KinShip Coefficient"),xlab = "Kinship Coefficient")
 
 hist(ibd$PI_HAT,main =paste0(prefix, " IBD Pi_hat"),xlab = "Pi_hat")
 
 ggplot(data = ibd,aes(Z0,Z1,color=Relatedness))+geom_point()+ggtitle(paste0(prefix," IBD with outliers"))
-ggplot(data = ibd[!((ibd$IID1 %in% outliers$ID1)&(ibd$IID2 %in% outliers$ID2)), ],aes(Z0,Z1,color=Relatedness))+geom_point()+
-  ggtitle(paste0(prefix," IBD without outliers"))
+if(nrow(outliers)>0){
+  ggplot(data = ibd[!((ibd$IID1 %in% outliers$ID1)&(ibd$IID2 %in% outliers$ID2)), ],aes(Z0,Z1,color=Relatedness))+geom_point()+
+    ggtitle(paste0(prefix," IBD without outliers"))
+}
+
 dev.off()
 
-outliers1 <- cbind(outliers$FID1,outliers$ID1)
-write.table(outliers1,file = paste0(prefix,"_RelatednessOutliers.txt"),quote = F,row.names = F,col.names = F)		
+outliers1 <- cbind.data.frame(outliers$FID,outliers$ID2)
+outliers1 <- outliers1[!duplicated(outliers1),]
+if(nrow(outliers1)==0){
+  warning("There is no related samples based on Kinship threshold = ",Kinship)
+}
+write.table(outliers1,file = paste0(prefix,".RelatednessOutliers.txt"),quote = F,row.names = F,col.names = F)		

@@ -27,7 +27,7 @@
 #            -ggpubr
 #            -dplyr
 ##################################################################################
-
+set -e
 ### print start date and time
 echo Job started on:
 date -u
@@ -71,7 +71,7 @@ mkdir -p "${OutDir}/QCoutput_${FilePrefix}"
 echo "###############################################################"
 echo "Preparing Input data..."
 echo "###############################################################"
-sh "${ScriptDir}/1_PreparingInputs.sh"
+bash "${ScriptDir}/1_PreparingInputs.sh"
 
 if [ "$sumplots" == yes ]
 then
@@ -79,7 +79,7 @@ then
   echo "###############################################################"
   echo "Generating summerize imputation plots..."
   echo "###############################################################"
-  Rscript "${ScriptDir}/2_summarizeImputation.r" "${InDir}"  "${OutDir}/QCoutput_${FilePrefix}/Summarize"  "${RefGenome_legend}"
+  Rscript "${ScriptDir}/2_summarizeImputation.R" "${InDir}"  "${OutDir}/QCoutput_${FilePrefix}/Summarize"  "${RefGenome_legend}"
 fi
 
 if [ "$GeneralQC" = "yes" ]
@@ -87,7 +87,7 @@ then
   echo "###############################################################"
   echo "Running general QC..."
   echo "###############################################################"
-  sh "${ScriptDir}/3_QC.sh"
+  bash "${ScriptDir}/3_QC.sh"
 fi
 
 if [ "$CheckReletedness" = "yes" ]
@@ -95,7 +95,7 @@ then
   echo "#######################################################"
   echo "Checking relatedness..."
   echo "#######################################################"
-  sh "${ScriptDir}/4_CheckRelatedness.sh"
+  bash "${ScriptDir}/4_CheckRelatedness.sh"
 fi
 
 if [ "$CheckEthnicity" = "yes" ]
@@ -103,7 +103,7 @@ then
   echo "#######################################################"
   echo "Checkinging ethnicity..."
   echo "#######################################################"
-  sh "${ScriptDir}/5_CheckEthnicity.sh"
+  bash "${ScriptDir}/5_CheckEthnicity.sh"
 fi
 
 if [ "$FormatForImputation" = "yes" ]
@@ -111,7 +111,7 @@ then
 	echo "#######################################################"
 	echo "Preparing Imputation input files..."
 	echo "#######################################################"
-	sh "${ScriptDir}/6_FormatForImputation.sh"
+	bash "${ScriptDir}/6_FormatForImputation.sh"
 fi
 #### print end date and time
 echo Job finished:

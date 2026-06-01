@@ -20,12 +20,9 @@ calcPopDist<-function(dat.pca, ref){
 
 args<-commandArgs(TRUE)
 
-#args <- c("C:/Users/mk693/OneDrive - University of Exeter/Desktop/2021/NIH/Data/Genotyping/QC/GRCh37",
-#          "NIH37","C:/Users/mk693/OneDrive - University of Exeter/Desktop/2021/NIH/Data/Genotyping/Ref/GRCh37_HG19_Referance")
-
-setwd(args[1])
-prefix<-args[2]
-refSamples<-args[3]
+setwd(trimws(args[1]))
+prefix<-trimws(args[2])
+refSamples<-trimws(args[3])
 #refPed <- args[4]
 #refInfo <- args[5]
 
@@ -39,17 +36,6 @@ pcas <- left_join(pcas , pop , by="Sample")
 pcas$Population[is.na(pcas$Population)] = "OurSamples"
 pcas$SuperPopulation[is.na(pcas$SuperPopulation)]="OurSamples"
 
-
-
-
-# pcs <- pcas
-# pcs <- pcs[,c(-1)]
-# colnames(pcs)[2:dim(pcs)[2]] <- paste0("PC",c(1:(dim(pcs)[2]-1)))
-# colnames(pcs)[1] <- "sample"
-# pcs$population <- pop$SuperPopulation[match(pcs$sample, pop$Sample)]
-# pcs[is.na(pcs)] <- " "
-# pcs$population[which(pcs$population== " ")]<-"OurSamples"
-# pcs$population <- as.factor(pcs$population)
 pcs_our <- pcas[pcas$Population=="OurSamples",]
 p1 = ggplot(pcs_our, aes(PC1, PC2)) + geom_point() 
 p2 = ggplot(pcs_our, aes(PC1, PC3)) + geom_point() 

@@ -1,5 +1,5 @@
 #!/bin/bash
-
+set -e
 
 cd ${OutDir}/QCoutput_${FilePrefix}
 
@@ -120,4 +120,4 @@ rm ${FilePrefix}_update_*.*
 #plink --bfile ${FilePrefix}_QC_final --extract ${RefProbe} --recodeA --out ${FilePrefix}_QC_final_DNAmSNPs
 
 
-echo "General QC was done"
+echo "[INFO] General QC was done"

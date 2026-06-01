@@ -1,15 +1,19 @@
+#!/bin/bash
+
+set -e
+
 
 if [ "$CombinedInputs" == yes ]
 then
   if [ "$InputFormat" == zip ]
   then
-    echo "Unzipping input data..."
+    echo "[INFO] Unzipping input data..."
     for i in {1..22}
     do
 	    unzip -P $Password  ${InDir}/chr_${i}.zip -d $InDir 
     done
 	
-    echo "Merging input data..."
+    echo "[INFO] Merging input data..."
     if [ -f ${OutDir}/QCoutput_${FilePrefix}/binary.list.txt ]
     then
       rm ${OutDir}/QCoutput_${FilePrefix}/binary.list.txt
@@ -30,7 +34,7 @@ then
   
   if [ "$InputFormat" == vcf ]
   then
-	echo "Merging input data..."
+	echo "[INFO] Merging input data..."
     if [ -f ${OutDir}/QCoutput_${FilePrefix}/binary.list.txt ]
     then
       rm ${OutDir}/QCoutput_${FilePrefix}/binary.list.txt
@@ -52,7 +56,7 @@ then
   
   if [ "$InputFormat" == ped-map ]
   then
-	echo "Merging input data..."
+	echo "[INFO] Merging input data..."
     if [ -f ${OutDir}/QCoutput_${FilePrefix}/binary.list.txt ]
     then
       rm ${OutDir}/QCoutput_${FilePrefix}/binary.list.txt
@@ -75,7 +79,7 @@ then
   
   if [ "$InputFormat" == binary ]
   then
-	echo "Merging input data..."
+	echo "[INFO] Merging input data..."
     if [ -f ${OutDir}/QCoutput_${FilePrefix}/binary.list.txt ]
     then
       rm ${OutDir}/QCoutput_${FilePrefix}/binary.list.txt
@@ -96,7 +100,7 @@ if [ "$CombinedInputs" == no ]
 then
   if [ "$InputFormat" == zip ]
   then
-    echo "Unzipping input data..."
+    echo "[INFO] Unzipping input data..."
     for i in ${InDir}/*.zip
     do
 		  Name=${i#"${InDir}/}"}

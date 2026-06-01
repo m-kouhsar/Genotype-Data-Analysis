@@ -1,3 +1,5 @@
+#!/bin/bash
+set -e 
 
 cd ${OutDir}/QCoutput_${FilePrefix}
 mkdir -p Relatedness
@@ -7,13 +9,12 @@ king -b ${FilePrefix}_QC_final.bed --kinship --prefix Relatedness/${FilePrefix}_
 ## check for relatedness with other samples with plink
 plink --bfile ${FilePrefix}_QC_final --genome --out Relatedness/${FilePrefix}_QC_final_ibd
 
-echo "Genrating the relatedness plots..."
-Rscript ${ScriptDir}/PlotRelatedness.r ${OutDir}/QCoutput_${FilePrefix}/Relatedness ${FilePrefix}_QC_final
+echo "[INFO] Genrating the relatedness plots..."
+
+Rscript ${ScriptDir}/PlotRelatedness.R ./Relatedness $Kinship ${FilePrefix}_QC_final
 
 
-plink --bfile ${FilePrefix}_QC_final --remove Relatedness/${FilePrefix}_QC_final_RelatednessOutliers.txt  --make-bed --out Relatedness/${FilePrefix}_QC_final
+plink --bfile ${FilePrefix}_QC_final --remove Relatedness/${FilePrefix}_QC_final.RelatednessOutliers.txt  --make-bed --out Relatedness/${FilePrefix}_QC_final
 
 mv Relatedness/${FilePrefix}_QC_final.b* ./
 mv Relatedness/${FilePrefix}_QC_final.fam ./
-
-

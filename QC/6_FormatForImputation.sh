@@ -1,3 +1,6 @@
+
+#!/bin/bash
+
 ## format files for use with Michegan Imputation Server
 
 ## EXECUTION
@@ -18,6 +21,7 @@
 
 ## OUTPUT
 # vcf files split by chr for upload to michegan imputation server
+set -e
 
 cd ${OutDir}/QCoutput_${FilePrefix}
 
