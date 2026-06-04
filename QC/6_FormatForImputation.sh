@@ -31,13 +31,17 @@ mkdir -p ImputationInput
 plink --bfile ${FilePrefix}_QC_final --freq --out ImputationInput/${FilePrefix}_QC_final
 
 cp ${FilePrefix}_QC_final.bim ImputationInput/${FilePrefix}_QC_final.bim
+cp ${FilePrefix}_QC_final.bed ImputationInput/${FilePrefix}_QC_final.bed
+cp ${FilePrefix}_QC_final.fam ImputationInput/${FilePrefix}_QC_final.fam
+
 cd ImputationInput
 perl ${ScriptDir}/HRC-1000G-check-bim.pl -b ${FilePrefix}_QC_final.bim -f ${FilePrefix}_QC_final.frq -r $RefGenome_legend -g --1000g
 
-
-sed -i  '1 s+'"${FilePrefix}_QC_final"'+'"${OutDir}/QCoutput_${FilePrefix}/${FilePrefix}_QC_final"'+' Run-plink.sh
+# sed -i  '1 s+'"${FilePrefix}_QC_final"'+'"${OutDir}/QCoutput_${FilePrefix}/${FilePrefix}_QC_final"'+' Run-plink.sh
 sed -i  '6,$ s+--make-bed+--recode vcf+' Run-plink.sh
-sh Run-plink.sh
+sed -i '1i\set e' Run-plink.sh
+sed -i '1i\#!/bin/bash' Run-plink.sh
+bash Run-plink.sh
 #for file in *.vcf; do awk '{if($0 !~ /^#/) print "chr"$0; else print $0}' ${file} > with_chr_${file}; vcf-sort with_chr_${file} | bgzip -c > ${file}.gz;done
 for file in *.vcf; do vcf-sort ${file} | bgzip -c > ${file}.gz;done
  
