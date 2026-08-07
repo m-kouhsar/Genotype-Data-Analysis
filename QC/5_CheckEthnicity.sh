@@ -14,7 +14,7 @@ echo "[INFO} change variant ids to chr:bp in reference data"
 echo
 RefGenome_file=$(basename $RefGenome_binary)
 awk '{if ($1 != 0) print $2,"chr"$1":"$4}' ${RefGenome_binary}.bim > Ethnicity/${RefGenome_file}_UpdateVariantsFormat.txt
-plink --bfile $RefGenome_binary --update-name Ethnicity/${RefGenome_file}_UpdateVariantsFormat.txt --biallelic-only --make-bed --out Ethnicity/${RefGenome_file}_Updated
+plink --bfile $RefGenome_binary --update-name Ethnicity/${RefGenome_file}_UpdateVariantsFormat.txt --biallelic-only --allow-extra-chr --make-bed --out Ethnicity/${RefGenome_file}_Updated
 RefGenome_binary="Ethnicity/${RefGenome_file}_Updated"
 # first merge with 1000 genomes and filter variants to those in common
 # need to test initially in case of error with triallelic variants

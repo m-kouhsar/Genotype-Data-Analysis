@@ -13,8 +13,6 @@ echo "[INFO] Genrating the relatedness plots..."
 
 Rscript ${ScriptDir}/PlotRelatedness.R ./Relatedness $Kinship ${FilePrefix}_QC_final
 
-
-plink --bfile ${FilePrefix}_QC_final --remove Relatedness/${FilePrefix}_QC_final.RelatednessOutliers.txt  --make-bed --out Relatedness/${FilePrefix}_QC_final
-
-mv Relatedness/${FilePrefix}_QC_final.b* ./
-mv Relatedness/${FilePrefix}_QC_final.fam ./
+if [ -f "Relatedness/${FilePrefix}_QC_final.RelatednessOutliers.txt" ]; then
+  plink --bfile ${FilePrefix}_QC_final --remove Relatedness/${FilePrefix}_QC_final.RelatednessOutliers.txt  --make-bed --out Relatedness/${FilePrefix}_QC_final
+fi

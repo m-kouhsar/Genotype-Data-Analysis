@@ -26,7 +26,7 @@ then
 
 	## use python script to identify duplicated with greatest missingness
 	python ${ScriptDir}/ExcludeDuplicates.py ${FilePrefix}_king.tmp ${FilePrefix}_duplicateSamples.imiss ${FilePrefix}_dupsToExclude.txt
-	rm ${FILEPREFIX}_king.tmp
+	rm ${FilePrefix}_king.tmp
 	## remove duplicates
 	plink --bfile ${FilePrefix} --remove ${FilePrefix}_dupsToExclude.txt --make-bed --out ${FilePrefix}_update_1
 else

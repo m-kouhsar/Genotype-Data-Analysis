@@ -68,12 +68,7 @@ if(nrow(outliers) > 0){
   write.table(outliers,file = paste0(prefix,".RelatedSamples.txt"),quote = F,row.names = F,col.names = T)
   
 }else{
-  warning("There is no related samples based on Kinship threshold = ",Kinship)
+  message("---> There is no related samples based on Kinship threshold = ",Kinship)
 }
 
-outliers1 <- cbind.data.frame(outliers$FID2,outliers$ID2)
-outliers1 <- outliers1[!duplicated(outliers1),]
-if(nrow(outliers1)==0){
-  warning("There is no related samples based on Kinship threshold = ",Kinship)
-}
 		
