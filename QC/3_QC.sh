@@ -104,20 +104,5 @@ echo
 ## clean up intermediate files but keep log files
 rm ${FilePrefix}_update_*.*
 
-## calc PCS within sample only
-# LD prune
-#plink --bfile ${FilePrefix}_QC_final --indep 50 5 1.5 --out ${FilePrefix}_QC_final.ld
-#plink --bfile ${FilePrefix}_QC_final --extract ${FilePrefix}_QC_final.ld.prune.in --make-bed --out ${FilePrefix}_QC_final.ld.prune
-
-#mkdir -p GCTA_${FilePrefix}
-
-#gcta64 --bfile ${FilePrefix}_QC_final.ld.prune --make-grm-bin --autosome --out GCTA_${FilePrefix}/${FilePrefix}_QC_final_GCTA
-#gcta64 --grm GCTA_${FilePrefix}/${FilePrefix}_QC_final_GCTA --pca --thread-num 16 --out GCTA_${FilePrefix}/${FilePrefix}_QC_final.pca
-
-#rm ${FilePrefix}_QC_final.ld.prune*
-
-## extract SNP probes for comparison with DNAm data
-#plink --bfile ${FilePrefix}_QC_final --extract ${RefProbe} --recodeA --out ${FilePrefix}_QC_final_DNAmSNPs
-
 
 echo "[INFO] General QC was done"
