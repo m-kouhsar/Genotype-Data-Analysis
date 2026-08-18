@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -eu
 
 
 if [ "$CombinedInputs" == yes ]
@@ -14,83 +14,69 @@ then
     done
 	
     echo "[INFO] Merging input data..."
-    if [ -f ${OutDir}/QCoutput_${FilePrefix}/binary.list.txt ]
+    if [ -f ${OutDir}/binary.list.txt ]
     then
-      rm ${OutDir}/QCoutput_${FilePrefix}/binary.list.txt
+      rm ${OutDir}/binary.list.txt
     fi
     for i in {1..22}
     do 
-      plink --vcf  ${InDir}/chr${i}.dose.vcf.gz --double-id --make-bed --out ${OutDir}/QCoutput_${FilePrefix}/${FilePrefix}_chr${i}
-      echo ${OutDir}/QCoutput_${FilePrefix}/${FilePrefix}_chr${i} >> ${OutDir}/QCoutput_${FilePrefix}/binary.list.txt 
+      plink --vcf  ${InDir}/chr${i}.dose.vcf.gz --double-id --make-bed --out ${OutDir}/${FilePrefix}_chr${i}
+      echo ${OutDir}/${FilePrefix}_chr${i} >> ${OutDir}/binary.list.txt 
     done
-    plink --merge-list ${OutDir}/QCoutput_${FilePrefix}/binary.list.txt --make-bed --out ${OutDir}/QCoutput_${FilePrefix}/${FilePrefix}
+    plink --merge-list ${OutDir}/binary.list.txt --make-bed --out ${OutDir}/${FilePrefix}
     
-    while read p
-    do
-      rm ${p}.*
-    done < ${OutDir}/QCoutput_${FilePrefix}/binary.list.txt
   fi
   
   
   if [ "$InputFormat" == vcf ]
   then
 	echo "[INFO] Merging input data..."
-    if [ -f ${OutDir}/QCoutput_${FilePrefix}/binary.list.txt ]
+    if [ -f ${OutDir}/binary.list.txt ]
     then
-      rm ${OutDir}/QCoutput_${FilePrefix}/binary.list.txt
+      rm ${OutDir}/binary.list.txt
     fi
   
     for i in {1..22}
     do 
-      plink --vcf  ${InDir}/chr${i}.dose.vcf.gz --double-id --make-bed --out ${OutDir}/QCoutput_${FilePrefix}/${FilePrefix}_chr${i}
-      echo ${OutDir}/QCoutput_${FilePrefix}/${FilePrefix}_chr${i} >> ${OutDir}/QCoutput_${FilePrefix}/binary.list.txt 
+      plink --vcf  ${InDir}/chr${i}.dose.vcf.gz --double-id --make-bed --out ${OutDir}/${FilePrefix}_chr${i}
+      echo ${OutDir}/${FilePrefix}_chr${i} >> ${OutDir}/binary.list.txt 
     done
-    plink --merge-list ${OutDir}/QCoutput_${FilePrefix}/binary.list.txt --make-bed --out ${OutDir}/QCoutput_${FilePrefix}/${FilePrefix}
-    
-    while read p
-    do
-      rm ${p}.*
-    done < ${OutDir}/QCoutput_${FilePrefix}/binary.list.txt
+    plink --merge-list ${OutDir}/binary.list.txt --make-bed --out ${OutDir}/${FilePrefix}
     
   fi
   
   if [ "$InputFormat" == ped-map ]
   then
 	echo "[INFO] Merging input data..."
-    if [ -f ${OutDir}/QCoutput_${FilePrefix}/binary.list.txt ]
+    if [ -f ${OutDir}/binary.list.txt ]
     then
-      rm ${OutDir}/QCoutput_${FilePrefix}/binary.list.txt
+      rm ${OutDir}/binary.list.txt
     fi
   
     for i in ${InDir}/*.map
     do 
 	    Name=${i%".map"}
-      plink --file ${InDir}/${Name} --make-bed --out  ${OutDir}/QCoutput_${FilePrefix}/${FilePrefix}_${Name}
-      echo ${OutDir}/QCoutput_${FilePrefix}/${FilePrefix}_${Name} >> ${OutDir}/QCoutput_${FilePrefix}/binary.list.txt 
+      plink --file ${InDir}/${Name} --make-bed --out  ${OutDir}/${FilePrefix}_${Name}
+      echo ${OutDir}/${FilePrefix}_${Name} >> ${OutDir}/binary.list.txt 
     done
-    plink --merge-list ${OutDir}/QCoutput_${FilePrefix}/binary.list.txt --make-bed --out ${OutDir}/QCoutput_${FilePrefix}/${FilePrefix}
-    
-    while read p
-    do
-      rm ${p}.*
-    done < ${OutDir}/QCoutput_${FilePrefix}/binary.list.txt
+    plink --merge-list ${OutDir}/binary.list.txt --make-bed --out ${OutDir}/${FilePrefix}
     
   fi
   
   if [ "$InputFormat" == binary ]
   then
 	echo "[INFO] Merging input data..."
-    if [ -f ${OutDir}/QCoutput_${FilePrefix}/binary.list.txt ]
+    if [ -f ${OutDir}/binary.list.txt ]
     then
-      rm ${OutDir}/QCoutput_${FilePrefix}/binary.list.txt
+      rm ${OutDir}/binary.list.txt
     fi
   
     for i in ${InDir}/*.bed
     do 
 	    Name=${i%".bed"}
-      echo ${OutDir}/QCoutput_${FilePrefix}/${Name} >> ${OutDir}/QCoutput_${FilePrefix}/binary.list.txt 
+      echo ${OutDir}/${Name} >> ${OutDir}/binary.list.txt 
     done
-    plink --merge-list ${OutDir}/QCoutput_${FilePrefix}/binary.list.txt --make-bed --out ${OutDir}/QCoutput_${FilePrefix}/${FilePrefix}
+    plink --merge-list ${OutDir}/binary.list.txt --make-bed --out ${OutDir}/${FilePrefix}
     
   fi
 fi
@@ -98,43 +84,22 @@ fi
 
 if [ "$CombinedInputs" == no ]
 then
-  if [ "$InputFormat" == zip ]
-  then
-    echo "[INFO] Unzipping input data..."
-    for i in ${InDir}/*.zip
-    do
-		  Name=${i#"${InDir}/}"}
-		  Name=${i%",zip"}
-	    unzip -P $Password  ${InDir}/chr_${i}.zip -d ${OutDir}/QCoutput_${FilePrefix}
-		  mv ${OutDir}/QCoutput_${FilePrefix}/Name ${OutDir}/QCoutput_${FilePrefix}/${FilePrefix}
-    done
-  fi
   
   if [ "$InputFormat" == vcf ]
   then
-    for i in ${InDir}/*.vcf.gz
-    do 
-      plink --vcf  ${InDir}/${i} --double-id --make-bed --out ${OutDir}/QCoutput_${FilePrefix}/${FilePrefix}
-    done
+      plink --vcf  ${InputPrefix} --double-id --make-bed --out ${OutDir}/${FilePrefix}
   fi
   
   if [ "$InputFormat" == ped-map ]
   then
-    for i in ${InDir}/*.map
-    do 
-	    Name=${i%".map"}
-      plink --file ${InDir}/${Name} --make-bed --out  ${OutDir}/QCoutput_${FilePrefix}/${FilePrefix}
-    done
+      plink --file ${InputPrefix} --make-bed --out  ${OutDir}/${FilePrefix}
+
   fi
   
   if [ "$InputFormat" == binary ]
   then
-    for i in ${InDir}/*.bed
-    do 
-      Name=${i%".bed"}
-	    cp ${Name}.fam ${OutDir}/QCoutput_${FilePrefix}/${FilePrefix}.fam
-      cp ${Name}.bim ${OutDir}/QCoutput_${FilePrefix}/${FilePrefix}.bim
-      cp ${Name}.bed ${OutDir}/QCoutput_${FilePrefix}/${FilePrefix}.bed
-    done
+	    cp ${InputPrefix}.fam ${OutDir}/${FilePrefix}.fam
+      cp ${InputPrefix}.bim ${OutDir}/${FilePrefix}.bim
+      cp ${InputPrefix}.bed ${OutDir}/${FilePrefix}.bed
   fi
 fi

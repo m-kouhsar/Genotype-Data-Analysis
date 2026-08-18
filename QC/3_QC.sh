@@ -1,7 +1,7 @@
 #!/bin/bash
-set -e
+set -eu
 
-cd ${OutDir}/QCoutput_${FilePrefix}
+cd $OutDir
 
 echo
 echo "[INFO] Removing duplicate samples..."
@@ -102,7 +102,8 @@ echo
 echo "[INFO] Cleaning up intermediate files but keep log files..."
 echo
 ## clean up intermediate files but keep log files
-rm ${FilePrefix}_update_*.*
-
+rm ${FilePrefix}_update_*.bed
+rm ${FilePrefix}_update_*.bim
+rm ${FilePrefix}_update_*.fam
 
 echo "[INFO] General QC was done"

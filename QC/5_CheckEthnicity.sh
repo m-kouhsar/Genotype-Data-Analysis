@@ -1,9 +1,14 @@
 #!/bin/bash
-set -e
+set -eu
 
-cd ${OutDir}/QCoutput_${FilePrefix}
+cd $OutDir
 mkdir -p Ethnicity 
 InputData=${FilePrefix}_QC_final
+if [[ ! -f "${InputData}.bim" ]]; then
+  echo "Warning: There is no general QC output file (${InputData}.bim/bed/fam). "
+  echo "         Using original input (${FilePrefix}.bim/bed/fam) instead."
+  InputData="${FilePrefix}"
+fi
 
 echo
 echo "[INFO] change variant ids to chr:bp in input data"
@@ -137,5 +142,9 @@ echo
 echo "[INFO] Generating plots..."
 echo 
 Rscript ${ScriptDir}/PlotEthnicity.R ./Ethnicity ${InputData}_1kgIDs_sharedSNP_mergedw1000G ${RefGenome_samples} 
+
+rm Ethnicity/*.bim
+rm Ethnicity/*.bed
+rm Ethnicity/*.fam
 
 echo "[INFO] Check ethnithity is done"

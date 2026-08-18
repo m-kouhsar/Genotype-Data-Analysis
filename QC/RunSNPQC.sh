@@ -27,7 +27,11 @@
 #            -ggpubr
 #            -dplyr
 ##################################################################################
-set -e
+
+# Exit immediately if a command exits with a non-zero status (-e),
+# treat unset variables as an error (-u)
+set -eu
+
 ### print start date and time
 echo Job started on:
 date -u
@@ -39,14 +43,14 @@ if [ -z "$1" ]; then
     exit 1
 fi
 
+set -a 
 source "$1"
+set +a
 
 echo "#############################################################################"
 echo " "
 echo "Input parameters:"
-echo "    Files prefix: $FilePrefix"
-echo "    Imputed data directory: $InDir"
-echo "    Output data directory: $OutDir"
+echo "    Input files prefix: $InputPrefix"
 echo "    Ziped files password: $Password"
 echo "    Minor allel frequency: $MAF"
 echo "    SNP missingness threshold: $GENO"
@@ -55,8 +59,8 @@ echo "    Hardy-Weinberg equilibrium exact test p-value threshold: $HWE"
 echo "    Check ethnicity? $CheckEthnicity"
 echo "    Check reletness? $CheckReletedness"
 echo "    Check sex? $CheckSex"
-echo "    Input data format: $FormatForImputation"
-echo "    Chromosomal Separated inputs: $CombinedInputs"
+echo "    Preparing the data for imputation? $FormatForImputation"
+echo "    Chromosomal Separated inputs (from imputation server)? $CombinedInputs"
 echo "    Genrating summary plots for imputed data? $sumplots"
 echo "    Reference genome binary files prefix: $RefGenome_binary"
 echo "    Reference genome legend file: $RefGenome_legend"
@@ -65,20 +69,24 @@ echo "    Scripts directory: $ScriptDir"
 echo " "
 echo "#############################################################################"
 
-mkdir -p "${OutDir}/QCoutput_${FilePrefix}"
+export InDir=$(dirname -- "$InputPrefix")
+export FilePrefix=$(basename -- "$InputPrefix")
+export OutDir="${InDir}/${FilePrefix}_QC"
+
+mkdir -p "${OutDir}"
 
 echo "###############################################################"
 echo "Preparing Input data..."
 echo "###############################################################"
 bash "${ScriptDir}/1_PreparingInputs.sh"
 
-if [ "$sumplots" == yes ]
+if [ "$sumplots" == "yes" ]
 then
-  mkdir -p "${OutDir}/QCoutput_${FilePrefix}/Summarize"
+  mkdir -p "${OutDir}/Summarize"
   echo "###############################################################"
   echo "Generating summerize imputation plots..."
   echo "###############################################################"
-  Rscript "${ScriptDir}/2_summarizeImputation.R" "${InDir}"  "${OutDir}/QCoutput_${FilePrefix}/Summarize"  "${RefGenome_legend}"
+  Rscript "${ScriptDir}/2_summarizeImputation.R" "${InDir}"  "${OutDir}/Summarize"  "${RefGenome_legend}"
 fi
 
 if [ "$GeneralQC" = "yes" ]
@@ -112,6 +120,10 @@ then
 	echo "#######################################################"
 	bash "${ScriptDir}/6_FormatForImputation.sh"
 fi
+
+rm ${OutDir}/${FilePrefix}.bim
+rm ${OutDir}/${FilePrefix}.bed
+rm ${OutDir}/${FilePrefix}.fam
 #### print end date and time
 echo Job finished:
 date -u

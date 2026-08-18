@@ -57,21 +57,27 @@ p6 = ggplot(pcas, aes(x = PC3, y = PC4,colour =Population)) + geom_point()+
   xlab(paste0("PC3 (",round(pct_variance[3],2),"%)"))+ylab(paste0("PC4 (",round(pct_variance[4],2),"%)"))
 
 p7 = ggplot(pcas, aes(x = PC1, y = PC2,colour =SuperPopulation)) + geom_point() +
+  scale_color_brewer(palette = "Set1") +
   xlab(paste0("PC1 (",round(pct_variance[1],2),"%)"))+ylab(paste0("PC2 (",round(pct_variance[2],2),"%)"))
 
 p8 = ggplot(pcas, aes(x = PC1, y = PC3,colour =SuperPopulation)) + geom_point() +
+  scale_color_brewer(palette = "Set1") +
   xlab(paste0("PC1 (",round(pct_variance[1],2),"%)"))+ylab(paste0("PC3 (",round(pct_variance[3],2),"%)"))
 
 p9 = ggplot(pcas, aes(x = PC1, y =  PC4,colour =SuperPopulation)) + geom_point() +
+  scale_color_brewer(palette = "Set1") +
   xlab(paste0("PC1 (",round(pct_variance[1],2),"%)"))+ylab(paste0("PC4 (",round(pct_variance[4],2),"%)"))
 
 p10 = ggplot(pcas, aes(x = PC2, y = PC3,colour =SuperPopulation)) + geom_point() +
+  scale_color_brewer(palette = "Set1") +
   xlab(paste0("PC2 (",round(pct_variance[2],2),"%)"))+ylab(paste0("PC3 (",round(pct_variance[3],2),"%)"))
 
 p11 = ggplot(pcas, aes(x = PC2, y = PC4,colour =SuperPopulation)) + geom_point() +
+  scale_color_brewer(palette = "Set1") +
   xlab(paste0("PC2 (",round(pct_variance[2],2),"%)"))+ylab(paste0("PC4 (",round(pct_variance[4],2),"%)"))
 
 p12 = ggplot(pcas, aes(x = PC3, y = PC4,colour =SuperPopulation)) + geom_point() +
+  scale_color_brewer(palette = "Set1") +
   xlab(paste0("PC3 (",round(pct_variance[3],2),"%)"))+ylab(paste0("PC4 (",round(pct_variance[4],2),"%)"))
 
 
